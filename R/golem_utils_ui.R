@@ -330,3 +330,22 @@ col_1 <- function(...){
 #'   
 #'   return(HTML(html))
 #' }
+
+
+
+
+# define some credentials
+credentials <- data.frame(
+  user = c("admin", "databrewuser2"), # mandatory
+  password = c("admin", "12345"), # mandatory
+  admin = c(TRUE, FALSE),
+  comment = "Simple and secure authentification mechanism 
+  for single 'Shiny' applications.",
+  stringsAsFactors = FALSE
+)
+
+# Change language
+shinymanager::set_labels(
+  language = "en",
+  "Please authenticate" = "LOGIN"
+)

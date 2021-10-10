@@ -1,5 +1,5 @@
-Package: TerraWorksApp
-Title: PKG_TITLE
+Package: TerraWatchApp
+Title: TerraWatch
 Version: 0.0.0.9000
 Authors@R: person('Samuel', 'Boafo', email = 'sefa.boafo@gmail.com', role = c('cre', 'aut'))
 Description: Land Cover classification shiny app
@@ -11,8 +11,13 @@ Imports:
     glue,
     golem,
     htmltools,
+    leaflet,
     processx,
-    shiny
+    shiny,
+    shinydashboard,
+    shinydashboardPlus,
+    shinymanager,
+    shinyWidgets
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1

@@ -6,5 +6,39 @@
 #' @noRd
 app_server <- function( input, output, session ) {
   # List the first level callModules here
+  
+  # # authentication module
+  auth <- callModule(
+    module = shinymanager::auth_server,
+    id = "auth",
+    check_credentials = shinymanager::check_credentials(credentials)
+  )
 
+  output$res_auth <- renderPrint({
+    reactiveValuesToList(auth)
+  })
+
+  observeEvent(session$input$logout,{
+    session$reload()
+  })
+  
+  
+  
+
+  df <- data.frame(
+    Longitude = c(NA, NA,NA,NA),
+    Latitude = c(NA,NA,NA,NA)
+  )
+  
+  output$coordtab <- DT::renderDT({
+    DT::datatable(df,rownames = F,options = list(dom = 't'))
+  })
+  
+  output$map <- leaflet::renderLeaflet({
+    leaflet::leaflet() %>% 
+      
+      #leaflet::addTiles() %>% 
+      leaflet::setView(lng = 32.290275, lat = 1.373333, zoom = 8)%>%
+      leaflet::addProviderTiles(leaflet::providers$Esri.NatGeoWorldMap)
+  })
 }

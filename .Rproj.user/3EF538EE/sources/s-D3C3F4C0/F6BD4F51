@@ -1,0 +1,23 @@
+{
+    "id": "F6BD4F51",
+    "path": "C:/Users/hp/Desktop/terrawatch/terrawatch/man/run_app.Rd",
+    "project_path": "man/run_app.Rd",
+    "type": "r_doc",
+    "hash": "3151629102",
+    "contents": "",
+    "dirty": false,
+    "created": 1633775920500.0,
+    "source_on_save": false,
+    "relative_order": 11,
+    "properties": {},
+    "folds": "",
+    "lastKnownWriteTime": 1633773602,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1633773602,
+    "read_only": true,
+    "read_only_alternatives": [
+        "R/run_app.R"
+    ]
+}

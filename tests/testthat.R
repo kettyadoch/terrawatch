@@ -1,4 +1,4 @@
 library(testthat)
-library(TerraWorksApp)
+library(TerraWatchApp)
 
-test_check("TerraWorksApp")
+test_check("TerraWatchApp")

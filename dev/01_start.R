@@ -14,8 +14,8 @@
 ## Fill the DESCRIPTION ----
 ## Add meta data about your application
 golem::fill_desc(
-  pkg_name = "TerraWorksApp", # The Name of the package containing the App 
-  pkg_title = "PKG_TITLE", # The Title of the package containing the App 
+  pkg_name = "TerraWatchApp", # The Name of the package containing the App 
+  pkg_title = "TerraWatch", # The Title of the package containing the App 
   pkg_description = "Land Cover classification shiny app", # The Description of the package containing the App 
   author_first_name = "Samuel", # Your First Name
   author_last_name = "Boafo", # Your Last Name
