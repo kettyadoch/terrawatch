@@ -9,8 +9,81 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # List the first level UI elements here 
-    fluidPage(
-      h1("TerraWorksApp")
+    # fluidPage(
+    #   h1("TerraWatchApp")
+    # )
+    shinydashboardPlus::dashboardPage(
+      options = list(sidebarExpandOnHover = TRUE),
+      header = shinydashboardPlus::dashboardHeader(title = tags$img(src="logo.png", height = "auto",width = "auto", align = "center")),
+      sidebar = shinydashboardPlus::dashboardSidebar(minified = TRUE, collapsed = TRUE),
+      body = shinydashboard::dashboardBody(
+        fresh::use_theme(mytheme),
+        tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
+        
+        leaflet::leafletOutput("map"),
+        shinymanager::auth_ui(id = "auth"),
+        shinymanager::fab_button(
+          shiny::actionButton(
+            inputId = "logout",
+            label = NULL,
+            tooltip = "Logout",
+            icon = icon("sign-out")
+          )
+        ),
+        shiny::absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+                      draggable = TRUE, top = 80, left = "auto", right = 100, bottom = "auto",
+                      width = 450, height = "auto",
+                      
+                      h2("LOCATION SELECTION"),
+                      hr(),
+                      p("Double click any cell in table to enter your coordinates."),
+                      DT::DTOutput("coordtab"),
+                      
+                      shinyWidgets::actionBttn("search",
+                                               "GO TO LOCATION", 
+                                               icon = icon("search"),
+                                               style = "material-flat",
+                                               size = "xs",
+                                               color = "success"),
+                      br(),
+                      hr(),
+                      div(
+                        fluidRow(
+                          column(
+                            6,
+                            shiny::textInput("lng","Longitude", placeholder = "Longitude")
+                          ),
+                          column(
+                            6,
+                            shiny::textInput("lng","Longitude", placeholder = "Longitude")
+                          )
+                        )
+                      ),
+                      shinyWidgets::actionBttn("search2",
+                                               "GO TO LOCATION", 
+                                               icon = icon("search"),
+                                               style = "material-flat",
+                                               size = "xs",
+                                               color = "success"),
+                      br(),
+                      hr(),
+                      shiny::fileInput("upload", "UPLOAD"),
+                      hr(),
+                      div(
+                        style = "text-align:center;",
+                        shinyWidgets::actionBttn("classify",
+                                                 "CLASSIFY", 
+                                                 icon = icon("search"),
+                                                 style = "material-flat",
+                                                 size = "sm",
+                                                 color = "success")
+                      )
+        ),
+        tags$div(id = 'infocad'),
+
+      ),
+      controlbar = shinydashboardPlus::dashboardControlbar(),
+      title = "DashboardPage"
     )
   )
 }
@@ -33,7 +106,7 @@ golem_add_external_resources <- function(){
     favicon(),
     bundle_resources(
       path = app_sys('app/www'),
-      app_title = 'TerraWorksApp'
+      app_title = 'TerraWatchApp'
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
