@@ -1,0 +1,172 @@
+#' The application server-side
+#' 
+#' @param input,output,session Internal parameters for {shiny}. 
+#'     DO NOT REMOVE.
+#' @import shiny
+#' @noRd
+app_server <- function( input, output, session ) {
+  # List the first level callModules here
+  
+  # # authentication module
+  auth <- callModule(
+    module = shinymanager::auth_server,
+    id = "auth",
+    check_credentials = shinymanager::check_credentials(credentials)
+  )
+
+  output$res_auth <- renderPrint({
+    reactiveValuesToList(auth)
+  })
+
+  observeEvent(session$input$logout,{
+    session$reload()
+  })
+  
+  
+  
+
+  df <- data.frame(
+    Longitude = c(NA, NA,NA,NA),
+    Latitude = c(NA,NA,NA,NA)
+  )
+  
+  output$coordtab <- DT::renderDT({
+    DT::datatable(df,rownames = F,editable = "cell",options = list(dom = 't'))
+  })
+  
+  output$loc <- shiny::renderText({
+    "KAMPALA, UGANDA"
+  })
+  
+  output$map <- leaflet::renderLeaflet({
+    leaflet::leaflet() %>% 
+      
+      #leaflet::addTiles() %>% 
+      leaflet::setView(lng = 32.290275, lat = 1.373333, zoom = 8)%>%
+      leaflet::addProviderTiles(leaflet::providers$Esri.NatGeoWorldMap)
+  })
+  
+  
+  #------------------Analytics-------------------------
+  output$progressBox <- shinydashboard::renderValueBox({
+    shinydashboard::valueBox(
+      paste0(25 , "%"), "Model Accuracy", icon = icon("list"),
+      color = "green"
+    )
+  })
+  
+  output$approvalBox <- shinydashboard::renderValueBox({
+    shinydashboard::valueBox(
+      "1200 sq.ft.", "Area size", icon = icon("thumbs-up", lib = "glyphicon"),
+      color = "yellow"
+    )
+  })
+  
+  output$plot2 <- renderPlot({
+    shinipsum::random_ggplot()
+  })
+  
+  
+  output$plot <- shiny::renderPlot({
+    data <- data.frame(
+      category=c("water", "forest", "vegetation"),
+      count=c(10, 60, 30)
+    )
+    
+    # Compute percentages
+    data$fraction <- data$count / sum(data$count)
+    
+    # Compute the cumulative percentages (top of each rectangle)
+    data$ymax <- cumsum(data$fraction)
+    
+    # Compute the bottom of each rectangle
+    data$ymin <- c(0, head(data$ymax, n=-1))
+    
+    # Compute label position
+    data$labelPosition <- (data$ymax + data$ymin) / 2
+    
+    # Compute a good label
+    data$label <- paste0(data$category, "\n value: ", data$count)
+    
+    # Make the plot
+    #dev.new(width=5, height=4)
+    ggplot2::ggplot(data, ggplot2::aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=category)) +
+      ggplot2::geom_rect() +
+      ggplot2::geom_text( x=2, ggplot2::aes(y=labelPosition, label=label, color=category), size=6) + # x here controls label position (inner / outer)
+      ggplot2::scale_fill_brewer(palette=3) +
+      ggplot2::scale_color_brewer(palette=3) +
+      ggplot2::coord_polar(theta="y") +
+      ggplot2::xlim(c(-1, 4)) +
+      ggplot2::theme_void() +
+      ggplot2::theme(legend.position = "none")
+      #ggplot2::theme(plot.margin = ggplot2::unit(c(1,1,1,1),"cm"))
+  })
+  
+  # shiny::observeEvent(input$classify, {
+  #   
+  #   output$infocad <- shiny::renderUI({
+  #     my_infocard() %>%shiny::tagList()
+  #   })
+  # })
+  
+  observeEvent(input$classify, {
+    btn <- input$classify
+    id <- paste0('txt', btn)
+    insertUI(
+      selector = '#infocad',
+      ## wrap element in a div with id for ease of removal
+      ui = tags$div(
+        shiny::absolutePanel(id = "analytics", class = "panel panel-default", fixed = TRUE,
+                             draggable = TRUE, top = 80, left = 250, right = "auto", bottom = "auto",
+                             width = 700, height = "900px",
+                             style = "overflow-y: scroll;",
+                             shiny::column(
+                               width = 12,
+                               tags$hr(),
+                               tags$div(
+                                 # picture
+                                 tags$div(
+                                   #style = "padding-top:5px;",
+                                   fluidRow(
+                                     column(
+                                       1,
+                                       shiny::span(shiny::icon("search"))
+                                     ),
+                                     column(
+                                       11,
+                                       shiny::textOutput("loc")
+                                     )
+                                   )
+                                 ),
+                                 tags$hr()
+                                 ,
+                                 tags$div(
+                                   shiny::fluidRow(
+                                     shinydashboard::valueBoxOutput("progressBox", width = 6),
+                                     shinydashboard::valueBoxOutput("approvalBox", width = 6)
+                                   )
+                                 ),
+                                 # main information
+                                 tags$div(
+                                   #class = "caption",
+                                   tags$h4("CLASSIFICATION RESULTS"),
+                                   shiny::plotOutput("plot")
+                                   #p(selected_actor)
+                                 ),
+                                 # link to wikipedia's page
+                                 tags$div(
+                                   #tags$p("plot goes here"),
+                                   tags$h4("MODEL PERFORMANCE OVER TIME"),
+                                   shiny::plotOutput("plot2")
+                                 )
+                               )
+                             )
+                             
+                             ),
+        id = id
+      )
+    )
+    #inserted <<- c(id, inserted)
+  })
+  
+}

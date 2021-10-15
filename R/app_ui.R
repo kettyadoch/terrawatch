@@ -14,9 +14,10 @@ app_ui <- function(request) {
     # )
     shinydashboardPlus::dashboardPage(
       options = list(sidebarExpandOnHover = TRUE),
-      header = shinydashboardPlus::dashboardHeader(),
+      header = shinydashboardPlus::dashboardHeader(title = tags$img(src="logo.png", height = "auto",width = "auto", align = "center")),
       sidebar = shinydashboardPlus::dashboardSidebar(minified = TRUE, collapsed = TRUE),
       body = shinydashboard::dashboardBody(
+        fresh::use_theme(mytheme),
         tags$style(type = "text/css", "#map {height: calc(100vh - 80px) !important;}"),
         
         leaflet::leafletOutput("map"),
@@ -30,11 +31,12 @@ app_ui <- function(request) {
           )
         ),
         shiny::absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-                      draggable = TRUE, top = 80, left = "auto", right = 400, bottom = "auto",
-                      width = 390, height = "auto",
+                      draggable = TRUE, top = 80, left = "auto", right = 100, bottom = "auto",
+                      width = 450, height = "auto",
                       
                       h2("LOCATION SELECTION"),
-                      
+                      hr(),
+                      p("Double click any cell in table to enter your coordinates."),
                       DT::DTOutput("coordtab"),
                       
                       shinyWidgets::actionBttn("search",
@@ -47,8 +49,14 @@ app_ui <- function(request) {
                       hr(),
                       div(
                         fluidRow(
-                          shiny::textInput("lng","Longitude", placeholder = "Longitude"),
-                          shiny::textInput("lng","Longitude", placeholder = "Longitude")
+                          column(
+                            6,
+                            shiny::textInput("lng","Longitude", placeholder = "Longitude")
+                          ),
+                          column(
+                            6,
+                            shiny::textInput("lng","Longitude", placeholder = "Longitude")
+                          )
                         )
                       ),
                       shinyWidgets::actionBttn("search2",
@@ -63,14 +71,16 @@ app_ui <- function(request) {
                       hr(),
                       div(
                         style = "text-align:center;",
-                        shinyWidgets::actionBttn("sch",
+                        shinyWidgets::actionBttn("classify",
                                                  "CLASSIFY", 
                                                  icon = icon("search"),
                                                  style = "material-flat",
                                                  size = "sm",
                                                  color = "success")
                       )
-        )
+        ),
+        tags$div(id = 'infocad'),
+
       ),
       controlbar = shinydashboardPlus::dashboardControlbar(),
       title = "DashboardPage"
