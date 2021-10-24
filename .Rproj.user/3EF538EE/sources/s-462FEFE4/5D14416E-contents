@@ -1,0 +1,6 @@
+df = data.frame(Longitude = c(51.410702,51.409712,51.416301,51.417256),
+                Latitude = c(0.44957627,0.44702111,0.44584853,0.44538168))
+
+
+geosphere::centroid(df)
+df %>% geosphere::centroid()

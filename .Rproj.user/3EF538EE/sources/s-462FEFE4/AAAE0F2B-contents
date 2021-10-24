@@ -11,7 +11,7 @@ app_server <- function( input, output, session ) {
   auth <- callModule(
     module = shinymanager::auth_server,
     id = "auth",
-    check_credentials = shinymanager::check_credentials(credentials)
+    check_credentials = shinymanager::check_credentials(credentials),
   )
 
   output$res_auth <- renderPrint({
@@ -22,17 +22,41 @@ app_server <- function( input, output, session ) {
     session$reload()
   })
   
-  
-  
-
-  df <- data.frame(
-    Longitude = c(NA, NA,NA,NA),
-    Latitude = c(NA,NA,NA,NA)
+  init = data.frame(
+    Longitude = numeric(4),
+    Latitude = numeric(4)
   )
   
+  crd_rv <- reactiveValues(df  = init)
+
+  
+  
   output$coordtab <- DT::renderDT({
-    DT::datatable(df,rownames = F,editable = "cell",options = list(dom = 't'))
+    DT::datatable(crd_rv$df,rownames = F,editable = "cell",options = list(dom = 't'))%>%
+      DT::formatStyle(c(1,2), `border` = "solid 1px")
   })
+  
+  
+  proxy = DT::dataTableProxy("coordtab")
+  
+  # shiny::observe({
+  #   DT::replaceData(proxy, crd_rv$df, resetPaging = FALSE, rownames = FALSE)
+  # })
+  
+  
+  observeEvent(input$coordtab_cell_edit, {
+    info = input$coordtab_cell_edit
+    
+    str(info)
+    i = info$row
+    j = info$col + 1
+    k = info$value
+    
+    
+    crd_rv$df[i, j] <<- DT::coerceValue(k, crd_rv$df[i, j])
+    DT::replaceData(proxy, crd_rv$df, resetPaging = FALSE)
+  })
+  
   
   output$loc <- shiny::renderText({
     "KAMPALA, UGANDA"
@@ -45,6 +69,52 @@ app_server <- function( input, output, session ) {
       leaflet::setView(lng = 32.290275, lat = 1.373333, zoom = 8)%>%
       leaflet::addProviderTiles(leaflet::providers$Esri.NatGeoWorldMap)
   })
+  
+  
+  
+  observeEvent(input$search,{
+    browser()
+    df <- crd_rv$df %>% na.omit()
+    
+    crds = geosphere::centroid(df)
+    
+    if(nrow(df) > 1){
+      leaflet::leafletProxy("map") %>%
+        leaflet::clearMarkers()%>%
+        leaflet::clearPopups()%>%
+        leaflet::setView(lng = as.numeric(crds[1]), lat = as.numeric(crds[2]), zoom = 10)%>%
+        leaflet::addMarkers(lng = crds[1], lat = crds[2])%>%
+        leaflet::addPolygons(lng = df$Longitude, lat = df$Latitude)
+    }
+    
+  })
+  
+  observeEvent(input$search2, {
+    
+    req(input$lng)
+    req(input$lat)
+    
+    long = as.numeric(input$lng)
+    lat = as.numeric(input$lat)
+    
+    leaflet::leafletProxy("map") %>%
+      leaflet::clearMarkers()%>%
+      leaflet::clearPopups()%>%
+      leaflet::setView(lng = long, lat = lat, zoom = 10)%>%
+      leaflet::addMarkers(lng = long, lat = lat)%>%
+      leaflet.extras::addDrawToolbar(
+        position = "topright",
+        circleOptions = FALSE,
+        rectangleOptions = FALSE,
+      )
+    
+  })
+  
+  
+    
+  
+  
+  
   
   
   #------------------Analytics-------------------------
