@@ -1,0 +1,12 @@
+name: terrawatch
+title:
+username:
+account: sefadzi
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5000722
+bundleId: 5217382
+url: https://sefadzi.shinyapps.io/terrawatch/
+when: 1636116510.16649
+asMultiple: FALSE
+asStatic: FALSE

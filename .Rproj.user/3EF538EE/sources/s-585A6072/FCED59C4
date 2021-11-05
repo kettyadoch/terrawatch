@@ -3,13 +3,16 @@
     "path": "C:/Users/hp/Desktop/terrawatch/terrawatch/dev/03_deploy.R",
     "project_path": "dev/03_deploy.R",
     "type": "r_source",
-    "hash": "2389125863",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1633773842539.0,
     "source_on_save": false,
     "relative_order": 3,
-    "properties": {},
+    "properties": {
+        "cursorPosition": "26,0",
+        "scrollLine": "2"
+    },
     "folds": "",
     "lastKnownWriteTime": 1633773602,
     "encoding": "UTF-8",

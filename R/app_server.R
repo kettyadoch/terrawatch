@@ -27,6 +27,9 @@ app_server <- function( input, output, session ) {
     Latitude = numeric(4)
   )
   
+  dff <- data.frame(value = c(10, 30, 32, 28),
+                   Classes = c("Class One", "Class Two", "Class Three", "Class Four"))
+  
   crd_rv <- reactiveValues(df  = init)
 
   
@@ -66,14 +69,15 @@ app_server <- function( input, output, session ) {
     leaflet::leaflet() %>% 
       
       #leaflet::addTiles() %>% 
-      leaflet::setView(lng = 32.290275, lat = 1.373333, zoom = 8)%>%
-      leaflet::addProviderTiles(leaflet::providers$Esri.NatGeoWorldMap)
+      leaflet::setView(lng = 32.3032414, lat = 1.3707295, zoom = 18)%>%
+      leaflet::addProviderTiles(leaflet::providers$NASAGIBS.ModisTerraTrueColorCR,
+                       options = leaflet::providerTileOptions(time = Sys.Date() - 1)) 
   })
   
   
   
   observeEvent(input$search,{
-    browser()
+    
     df <- crd_rv$df %>% na.omit()
     
     crds = geosphere::centroid(df)
@@ -82,12 +86,14 @@ app_server <- function( input, output, session ) {
       leaflet::leafletProxy("map") %>%
         leaflet::clearMarkers()%>%
         leaflet::clearPopups()%>%
-        leaflet::setView(lng = as.numeric(crds[1]), lat = as.numeric(crds[2]), zoom = 10)%>%
+        leaflet::setView(lng = as.numeric(crds[1]), lat = as.numeric(crds[2]), zoom = 12)%>%
         leaflet::addMarkers(lng = crds[1], lat = crds[2])%>%
         leaflet::addPolygons(lng = df$Longitude, lat = df$Latitude)
     }
     
   })
+  
+   
   
   observeEvent(input$search2, {
     
@@ -132,6 +138,13 @@ app_server <- function( input, output, session ) {
     )
   })
   
+  output$modelBox <- shinydashboard::renderValueBox({
+    shinydashboard::valueBox(
+      "RF", "model", icon = icon("thumbs-up", lib = "glyphicon"),
+      color = "aqua"
+    )
+  })
+  
   output$plot2 <- renderPlot({
     shinipsum::random_ggplot()
   })
@@ -172,12 +185,55 @@ app_server <- function( input, output, session ) {
       #ggplot2::theme(plot.margin = ggplot2::unit(c(1,1,1,1),"cm"))
   })
   
+  observeEvent(input$report, {
+    modal_dialog()
+  })
+  
+  shiny::observeEvent(input$dismiss_modal, {
+    shiny::removeModal()
+  })
+  
+  shiny::observeEvent(input$final_edit, {
+    
+    
+    shiny::removeModal()
+    
+    
+  })
+  
   # shiny::observeEvent(input$classify, {
   #   
   #   output$infocad <- shiny::renderUI({
   #     my_infocard() %>%shiny::tagList()
   #   })
   # })
+  
+  output$timeplot = highcharter::renderHighchart({
+    highcharter::highchart() %>%
+      highcharter::hc_plotOptions(series = list(stacking = 'normal')) %>%
+      highcharter::hc_yAxis_multiples(
+        list(min = 0, max = 20),
+        list(min = 0, max = 16, opposite = TRUE)
+      ) %>% 
+      highcharter::hc_add_series(data = c(1, 2, 3, 4, 5, 6), type = 'area') %>% 
+      highcharter::hc_add_series(data = c(10, 12, 10, 13, 10, 11), type = 'area') %>% 
+      highcharter::hc_add_series(data = c(1, 3, 2, 3, 5, 3), type = 'area', yAxis = 1) %>% 
+      highcharter::hc_add_series(data = c(2, 3, 2, 3, 2, 3), type = 'area', yAxis = 1)
+    
+  })
+  
+  output$donut <- shiny::renderPlot({
+    hsize <- 10
+    
+    df <- dff %>% 
+      dplyr::mutate(x = hsize)
+    
+    ggplot2::ggplot(df, ggplot2::aes(x = hsize, y = value, fill = Classes)) +
+      ggplot2::geom_col() +
+      ggplot2::coord_polar(theta = "y") +
+      ggplot2::xlim(c(0.2, hsize + 0.5))
+  })
+  
   
   observeEvent(input$classify, {
     btn <- input$classify
@@ -188,7 +244,7 @@ app_server <- function( input, output, session ) {
       ui = tags$div(
         shiny::absolutePanel(id = "analytics", class = "panel panel-default", fixed = TRUE,
                              draggable = TRUE, top = 80, left = 250, right = "auto", bottom = "auto",
-                             width = 700, height = "900px",
+                             width = 600, height = 700,
                              style = "overflow-y: scroll;",
                              shiny::column(
                                width = 12,
@@ -212,22 +268,50 @@ app_server <- function( input, output, session ) {
                                  ,
                                  tags$div(
                                    shiny::fluidRow(
-                                     shinydashboard::valueBoxOutput("progressBox", width = 6),
-                                     shinydashboard::valueBoxOutput("approvalBox", width = 6)
+                                     shinydashboard::valueBoxOutput("progressBox", width = 4),
+                                     shinydashboard::valueBoxOutput("approvalBox", width = 4),
+                                     shinydashboard::valueBoxOutput("modelBox", width = 4)
                                    )
                                  ),
                                  # main information
                                  tags$div(
                                    #class = "caption",
-                                   tags$h4("CLASSIFICATION RESULTS"),
-                                   shiny::plotOutput("plot")
+                                   hr(),
+                                   shinydashboardPlus::box(
+                                     width = 12,
+                                     status = "success",
+                                     # background = "gray",
+                                     # collapsible = "TRUE",
+                                     title = "LAND COVER CHANGE CLASSIFICATION RESULTS",
+                                     
+                                     shiny::plotOutput("donut")
+                                     
+                                   ),
+                                   hr()
+                                   
                                    #p(selected_actor)
                                  ),
                                  # link to wikipedia's page
                                  tags$div(
-                                   #tags$p("plot goes here"),
-                                   tags$h4("MODEL PERFORMANCE OVER TIME"),
-                                   shiny::plotOutput("plot2")
+                                   br(),
+                                   hr(),
+                                   
+                                   shinydashboardPlus::box(
+                                     width = 12,
+                                     status = "success",
+                                     title = "MODEL PERFORMANCE OVER TIME",
+                                     highcharter::highchartOutput("timeplot")
+                                   )
+                                 ),
+                                 tags$div(
+                                   hr(),
+                                   shinyWidgets::actionBttn("report", 
+                                                            "GENERATE REPORT", 
+                                                            icon = icon("book"), 
+                                                            style = "material-flat",
+                                                            block = TRUE,
+                                                            color = "success"),
+                                   br()
                                  )
                                )
                              )
