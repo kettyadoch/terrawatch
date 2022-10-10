@@ -2,7 +2,7 @@
 Continuation of the project "Change detection for Land cover mapping in the areas surrounding the Murchison Falls National Park". Documents development of online tool with dashboard, maps, graphs and stats.
 ## Prototyping
 ### Screenshot 1
-Here, the enduser is able to draw a polygon around the area where they'd like to conduct a landcover change analysis. It could be anywhere in the world.
+Here, the enduser is able to draw a polygon around the area where they'd like to conduct a landcover change analysis.They can also input coordinates from their field work location or type a less granular location like name of a place. It could be anywhere in the world.
 
 ![Screenshot 1](screenshots/one.jpg "Screenshot 1")
 
