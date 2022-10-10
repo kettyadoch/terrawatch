@@ -1,4 +1,4 @@
-# terrawatch
+# Terrawatch
 Continuation of the project "Change detection for Land cover mapping in the areas surrounding the Murchison Falls National Park". Documents development of online tool with dashboard, maps, graphs and stats.
 ## Prototyping
 ### Screenshot 1
@@ -20,6 +20,6 @@ Here, the enduser is able to export summarized information and insights as produ
 
 ![Screenshot 4](screenshots/four.jpg "Screenshot 4")
 
-Figure 3. Screenshot allows enduser to export land cover change insights for Area of Interest of endsuser foruse in their projects, research, policy work, advocacy
+Figure 3. Screenshot allows enduser to export land cover change insights embedded in graphs, text and maps for Area of Interest of endsuser for use in their projects, research, policy work, advocacy 
 
 
