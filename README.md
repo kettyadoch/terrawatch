@@ -9,17 +9,17 @@ Here, the enduser is able to draw a polygon around the area where they'd like to
 Figure 1. Screenshot shows the selection capabilities of the Area of Interest of endsuser 
 
 ### Screenshot 2
-Here, the enduser is able to draw a polygon around the area where they'd like to conduct a landcover change analysis. It could be anywhere in the world.
+Here, the enduser is able to view statistics, accuracy/performance of the model, quatity of change for each land cover class for the defined Area of Interest.The enduser specifies the Area of Interest by drawing a polygon in the basemap where they'd like to conduct a landcover change analysis. It could be anywhere in the world.The information is visualised and plotted on graphs, text and maps.
 
 ![Screenshot 2](screenshots/two.jpg "Screenshot 2")
 
-Figure 2. Screenshot shows the selection capabilities of the Area of Interest of endsuser 
+Figure 2. Screenshot shows stats, graphs and maps of Area of Interest after running the model
 
 ### Screenshot 3
-Here, the enduser is able to draw a polygon around the area where they'd like to conduct a landcover change analysis. It could be anywhere in the world.
+Here, the enduser is able to export summarized information and insights as produced by the model, training data and collected data from the field also same as the raw data embedded in the satellite image
 
-![Screenshot 3](screenshots/three.jpg "Screenshot 3")
+![Screenshot 4](screenshots/four.jpg "Screenshot 4")
 
-Figure 3. Screenshot shows the selection capabilities of the Area of Interest of endsuser 
+Figure 3. Screenshot allows enduser to export land cover change insights for Area of Interest of endsuser foruse in their projects, research, policy work, advocacy
 
 
